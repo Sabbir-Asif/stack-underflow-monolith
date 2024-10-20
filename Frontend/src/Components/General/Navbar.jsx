@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { GrAnnounce } from "react-icons/gr";
-import { FaServicestack } from "react-icons/fa6";
+import { TbStackBack } from "react-icons/tb";
+import { FaChevronDown } from "react-icons/fa6";
 import { AuthContext } from "../Authentication/AuthProvider";
 
 const Navbar = () => {
@@ -9,6 +9,8 @@ const Navbar = () => {
   const popupRef = useRef(null);
   const { user, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  console.log(user);
 
   const handleFormSubmit = () => {
     setIsPopupVisible(false);
@@ -89,8 +91,8 @@ const Navbar = () => {
           </div>
           <NavLink to={"/"}>
             <span className="flex items-center gap-1">
-              <FaServicestack className="text-5xl text-base-200" />
-              <h2 className="text-lg text-white md:text-3xl font-bold font-poppins">
+              <TbStackBack className="text-5xl text-base-200" />
+              <h2 className="text-lg text-white md:text-xl font-medium italic font-poppins">
                 Stack-Underflow
               </h2>
             </span>
@@ -103,15 +105,20 @@ const Navbar = () => {
         </div>
         <div className="navbar-end gap-1 md:gap-4">
           <div>
+            {user && (
+              <button className="text-md mr-2 text-white font-poppins border px-3 rounded-full">
+                <span className="flex gap-1 items-center">
+                  {user.displayName.slice(0, 6)}
+                  <FaChevronDown className="text-sm" />
+                </span>
+              </button>
+            )}
             <button
               onClick={handleAuthClick}
-              className="btn btn-outline text-base-200 text-lg"
+              className="border px-3 rounded-full text-md italic text-white font-poppins"
             >
               {user ? "Log Out" : "Sign In"}
             </button>
-            {user && (
-              <span className="text-sm ml-2 text-white font-poppins">{user.displayName}</span>
-            )}
           </div>
         </div>
       </div>
