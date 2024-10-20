@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../Components/Authentication/AuthProvider";
-import { FaServicestack } from "react-icons/fa6";
+import { TbStackBack } from "react-icons/tb";
 
 const SignUp = () => {
   const { createUser } = useContext(AuthContext);
@@ -28,14 +28,14 @@ const SignUp = () => {
   };
 
   return (
-    <div className="hero flex justify-center min-h-screen bg-base-200">
+    <div className="hero flex justify-center min-h-screen bg-base-200 font-poppins">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="flex gap-12 flex-shrink-0 w-full shadow-2xl bg-base-100 rounded-r-lg">
           <div className="bg-blue-secondary px-20 rounded-l-lg flex flex-col justify-center items-center">
-            <h1 className="text-5xl text-center pb-8 font-black text-cream-primary">
+            <h1 className="text-5xl text-center pb-8 font-bold text-cream-primary">
               Stack-Underflow
             </h1>
-            <FaServicestack className="text-8xl text-cream-primary" />
+            <TbStackBack className="text-8xl text-cream-primary" />
           </div>
           <form onSubmit={handleSignUp} className="pr-20 pl-10 py-14">
             <h1 className="text-3xl font-bold text-center mb-8 text-blue-primary">Sign Up</h1>

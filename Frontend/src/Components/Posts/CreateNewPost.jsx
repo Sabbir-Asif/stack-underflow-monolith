@@ -59,30 +59,30 @@ const CreateNewPost = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-center mb-6">Submit Your Code</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="max-h-7xl overflow-scroll p-2 bg-white shadow-md rounded-lg">
+      <h2 className="text-xl font-semibold text-center mb-4">Create post</h2>
+      <hr className='h-0.5 bg-gray-300' />
+      <form onSubmit={handleSubmit} className="space-y-2">
         <div>
-          <label className="block text-lg font-medium text-gray-700">
-            Question:
+          <label className="mt-2 block text-md font-medium text-gray-600">
+            Message:
           </label>
           <textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            rows="4"
-            className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            rows="1"
+            className="w-full mt-1 p-2 border border-blue-secondary rounded-md focus:outline-none focus:ring-1 focus:ring-blue-primary focus:border-blue-primary"
             required
           />
         </div>
-
         <div>
-          <label className="block text-lg font-medium text-gray-700">
+          <label className="text-md font-medium text-gray-600">
             File Type:
           </label>
           <select
             value={fileType}
             onChange={(e) => setFileType(e.target.value)}
-            className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full mt-1 p-2 border border-blue-secondary rounded-md focus:outline-none focus:ring-2 focus:ring-blue-primary focus:border-blue-primary"
             required
           >
             {fileTypes.map((type) => (
@@ -94,7 +94,7 @@ const CreateNewPost = () => {
         </div>
 
         <div>
-          <label className="block text-lg font-medium text-gray-700">
+          <label className="block text-md font-medium text-gray-700">
             File Content:
           </label>
           <div className="mt-2 relative">
@@ -102,10 +102,10 @@ const CreateNewPost = () => {
               className="code-editor-container"
               style={{
                 position: 'relative',
-                height: '400px',
+                height: '350px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                overflow: 'hidden'
+                overflow: 'scroll'
               }}
             >
               <textarea
@@ -129,7 +129,7 @@ const CreateNewPost = () => {
                   fontSize: '14px',
                   zIndex: 1,
                   whiteSpace: 'pre',
-                  overflowX: 'auto',
+                  overflowX: 'scroll',
                   outline: 'none'
                 }}
               />
@@ -150,7 +150,7 @@ const CreateNewPost = () => {
                   fontSize: '14px',
                   pointerEvents: 'none',
                   whiteSpace: 'pre',
-                  overflowX: 'auto'
+                  overflowX: 'scroll'
                 }}
               >
                 <code
@@ -169,7 +169,7 @@ const CreateNewPost = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300"
+          className="w-full bg-blue-secondary text-white py-3 rounded-md hover:bg-blue-primary transition duration-300"
           disabled={loading}
         >
           {loading ? 'Submitting...' : 'Submit'}
