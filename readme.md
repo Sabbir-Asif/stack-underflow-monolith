@@ -1,6 +1,5 @@
 Here is the full `README.md` code for your project:
 
-```markdown
 # Stack-Underflow
 
 Stack-Underflow is a web application inspired by the popular Stack Overflow platform, where users can ask and answer questions, manage posts, and receive notifications. This project features authentication, notification system, user profile management, and more.
@@ -35,7 +34,7 @@ Ensure you have the following installed:
 
 ### Clone the repository
 
-```bash
+```
 git clone https://github.com/Sabbir-Asif/stack-underflow-monolith.git
 cd stack-underflow-monolith
 ```
