@@ -36,7 +36,7 @@ router.post('/v1/notifications/', async (req, res) => {
 
 router.get('/v1/notifications/', async (req, res) => {
     try {
-        const notifications = await Notification.find().populate('postId userId read');
+        const notifications = await Notification.find().sort({createdAt: -1}).populate('postId userId read');
         res.status(200).json(notifications);
     } catch (err) {
         res.status(500).json({ error: err.message });

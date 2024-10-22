@@ -12,7 +12,7 @@ const PostPage = () => {
                 <div className="flex items-center">
                     <div className="">
                         {user && <img src={user.imageUrl} alt="User Image"
-                            className="w-16"
+                            className="w-12 h-12 rounded-full mx-2"
                         />}
                     </div>
                     <button className="bg-base-300 py-2 flex-grow px-6 mr-12 rounded-full text-gray-500 text-left font-light" onClick={() => document.getElementById('my_modal_3').showModal()}>Create a post, {user?.displayName}</button>

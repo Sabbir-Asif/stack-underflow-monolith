@@ -76,7 +76,7 @@ const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
                                     <AiOutlineBell className='h-8 w-8 relative' />
                                 )}
                                 {notificationLength > 0 && (
-                                    <span className="absolute -mt-5 -mr-0.5 bg-info p-1 badge text-gray-700">{notificationLength}</span>
+                                    <span className="absolute -mt-5 -mr-0.5 bg-red-500 p-1 badge text-base-200">{notificationLength}</span>
                                 )}
                             </>
                         }
