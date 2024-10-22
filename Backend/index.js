@@ -4,7 +4,8 @@ const cors = require('cors');
 const mongoConnection = require("./util/mongoConnection");
 const users = require('./User/UserController');
 const posts = require('./Posts/PostController');
-const minioConnection = require('./util/minioConnection');
+const notifications = require('./Notifications/NotificationRouter')
+const { checkBucket } = require('./util/minioConnection');
 
 const port = process.env.PORT || 8080;
 app = express();
@@ -16,7 +17,7 @@ app.use(cors());
 
 //DB connection
 mongoConnection();
-minioConnection();
+checkBucket();
 
 //Routes
 app.get('/', (req, res) => {
@@ -25,5 +26,6 @@ app.get('/', (req, res) => {
 
 app.use('/api', users);
 app.use('/api', posts);
+app.use('/api', notifications);
 
 app.listen(port, '0.0.0.0', ()=> console.log(`Server is running on port ${port}...`));

@@ -1,21 +1,28 @@
 const Minio = require('minio');
 
-module.exports = async () => {
-  const minioClient = new Minio.Client({
-    endPoint: 'play.min.io',
+const minioClient = new Minio.Client({
+  endPoint: '127.0.0.1',
   port: 9000,
-  useSSL: true,
-  accessKey: 'Q3AM3UQ867SPQQA43P2F',
-  secretKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
+  accessKey: 'minioadmin',
+  secretKey: 'minioadmin',
+  useSSL: false,
+  pathStyle: true
 });
 
-const bucket = 'stack-underflow-sabbir';
+async function checkBucket() {
+  const bucket = 'stackunderflow';
 
-// const exists = await minioClient.bucketExists(bucket);
-// if (exists) {
-//   console.log('Bucket ' + bucket + ' exists.')
-// } else {
-//   await minioClient.makeBucket(bucket, 'us-east-1')
-//   console.log('Bucket ' + bucket + ' created in "us-east-1".')
-// }
+  try {
+    const exists = await minioClient.bucketExists(bucket);
+    if (exists) {
+      console.log('Bucket ' + bucket + ' exists.');
+    } else {
+      console.log('Bucket does not exist.');
+    }
+  } catch (err) {
+    console.error('Error checking bucket:', err);
+  }
 }
+
+module.exports = {minioClient, checkBucket};
+

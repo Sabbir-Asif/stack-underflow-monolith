@@ -18,6 +18,7 @@ const CreateNewPost = () => {
   const [fileType, setFileType] = useState('javascript');
   const [fileContent, setFileContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [inputType, setInputType] = useState('write');
   const { user } = useContext(AuthContext);
 
   const fileTypes = [
@@ -58,6 +59,14 @@ const CreateNewPost = () => {
     }
   };
 
+  const handleFileRead = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setFileContent(e.target.result);
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="max-h-7xl overflow-scroll p-2 bg-white shadow-md rounded-lg">
       <h2 className="text-xl font-semibold text-center mb-4">Create post</h2>
@@ -93,79 +102,117 @@ const CreateNewPost = () => {
           </select>
         </div>
 
+        {/* Input Type Selection: Write or Upload */}
         <div>
-          <label className="block text-md font-medium text-gray-700">
-            File Content:
-          </label>
-          <div className="mt-2 relative">
-            <div 
-              className="code-editor-container"
-              style={{
-                position: 'relative',
-                height: '350px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                overflow: 'scroll'
-              }}
-            >
-              <textarea
-                value={fileContent}
-                onChange={(e) => setFileContent(e.target.value)}
-                className="code-input"
-                spellCheck="false"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  padding: '1rem',
-                  border: 'none',
-                  resize: 'none',
-                  background: 'transparent',
-                  color: 'transparent',
-                  caretColor: 'white',
-                  fontFamily: 'monospace',
-                  fontSize: '14px',
-                  zIndex: 1,
-                  whiteSpace: 'pre',
-                  overflowX: 'scroll',
-                  outline: 'none'
-                }}
+          <label className="text-md font-medium text-gray-600">Input Type:</label>
+          <div className="flex space-x-4">
+            <label>
+              <input
+                type="radio"
+                value="write"
+                checked={inputType === 'write'}
+                onChange={() => setInputType('write')}
               />
-              <pre
-                className="code-output"
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  padding: '1rem',
-                  margin: 0,
-                  background: '#282a36',
-                  color: '#f8f8f2',
-                  fontFamily: 'monospace',
-                  fontSize: '14px',
-                  pointerEvents: 'none',
-                  whiteSpace: 'pre',
-                  overflowX: 'scroll'
-                }}
-              >
-                <code
-                  dangerouslySetInnerHTML={{
-                    __html: Prism.highlight(
-                      fileContent || '',
-                      Prism.languages[fileType] || Prism.languages.javascript,
-                      fileType
-                    ),
-                  }}
-                />
-              </pre>
-            </div>
+              Write Content
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="upload"
+                checked={inputType === 'upload'}
+                onChange={() => setInputType('upload')}
+              />
+              Upload File
+            </label>
           </div>
         </div>
+
+        {/* Show File Content or File Uploader */}
+        {inputType === 'write' ? (
+          <div>
+            <label className="block text-md font-medium text-gray-700">
+              File Content:
+            </label>
+            <div className="mt-2 relative">
+              <div
+                className="code-editor-container"
+                style={{
+                  position: 'relative',
+                  height: '350px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  overflow: 'scroll'
+                }}
+              >
+                <textarea
+                  value={fileContent}
+                  onChange={(e) => setFileContent(e.target.value)}
+                  className="code-input"
+                  spellCheck="false"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    padding: '1rem',
+                    border: 'none',
+                    resize: 'none',
+                    background: 'transparent',
+                    color: 'transparent',
+                    caretColor: 'white',
+                    fontFamily: 'monospace',
+                    fontSize: '14px',
+                    zIndex: 1,
+                    whiteSpace: 'pre',
+                    overflowX: 'scroll',
+                    outline: 'none'
+                  }}
+                />
+                <pre
+                  className="code-output"
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    padding: '1rem',
+                    margin: 0,
+                    background: '#282a36',
+                    color: '#f8f8f2',
+                    fontFamily: 'monospace',
+                    fontSize: '14px',
+                    pointerEvents: 'none',
+                    whiteSpace: 'pre',
+                    overflowX: 'scroll'
+                  }}
+                >
+                  <code
+                    dangerouslySetInnerHTML={{
+                      __html: Prism.highlight(
+                        fileContent || '',
+                        Prism.languages[fileType] || Prism.languages.javascript,
+                        fileType
+                      ),
+                    }}
+                  />
+                </pre>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <label className="block text-md font-medium text-gray-700">Upload File:</label>
+            <input
+              type="file"
+              accept=".txt,.c,.cpp,.java,.js,.py,.go,.php,.rb"
+              onChange={(e) => handleFileRead(e.target.files[0])}
+              className="mt-2"
+            />
+          </div>
+        )}
 
         <button
           type="submit"

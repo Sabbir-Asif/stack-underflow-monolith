@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Post = require('./PostModel');
 const { validateCreatePost, validateUpdatePost, validateQuery } = require('./PostValidation');
+const { minioClient } = require('../util/minioConnection')
 
-// Get all posts with pagination, filtering, and sorting
+
 router.get('/v1/posts', validateQuery, async (req, res) => {
     try {
         const { page = 1, limit = 10, fileType, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
         const filter = {};
-        
+
         if (fileType) filter.fileType = fileType;
 
         const skip = (page - 1) * limit;
@@ -41,7 +42,6 @@ router.get('/v1/posts', validateQuery, async (req, res) => {
     }
 });
 
-// Search posts by question, fileType, userId, or date range
 router.get('/v1/posts/search', async (req, res) => {
     try {
         const { question, fileType, userId, fromDate, toDate } = req.query;
@@ -70,7 +70,6 @@ router.get('/v1/posts/search', async (req, res) => {
     }
 });
 
-// Get a post by ID
 router.get('/v1/posts/:id', async (req, res) => {
     try {
         const postId = req.params.id;
@@ -87,20 +86,33 @@ router.get('/v1/posts/:id', async (req, res) => {
     }
 });
 
-// Create a new post
 router.post('/v1/posts', validateCreatePost, async (req, res) => {
     try {
+        const { fileName, fileContent } = req.body;
+        console.log(req.body);
         const post = new Post({
             ...req.body
         });
 
+        const bucketName = 'stackunderflow';
+        const bufferContent = Buffer.from(fileContent, 'utf-8');
+        const result = await minioClient
+            .putObject(bucketName, fileName, bufferContent)
+            .catch((e) => {
+                console.log("Error while creating object in MinIO: ", e);
+                throw e;
+            });
+
+        // console.log("Object uploaded successfully to MinIO: ", result);
+
         const savedPost = await post.save();
         res.status(201).json(savedPost);
     } catch (error) {
-        console.error(error);
-        res.status(400).json({ message: "Failed to create post" });
+        console.error("Error occurred: ", error);
+        res.status(400).json({ message: "Failed to create post", error: error.message });
     }
 });
+
 
 // Update a post by ID
 router.patch('/v1/posts/:id', validateUpdatePost, async (req, res) => {
