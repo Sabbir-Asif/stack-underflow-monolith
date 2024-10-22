@@ -33,7 +33,9 @@ const PostList = () => {
     return (
         <div className="container max-w-5xl mx-auto px-4 py-6">
             {loading ? (
-                <div className="text-center">Loading...</div>
+                <div className="text-center px-10">
+                    <span className="loading loading-spinner loading-lg"></span>
+                </div>
             ) : (
                 <div>
                     {posts.map((post) => (

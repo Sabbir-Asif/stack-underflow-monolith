@@ -48,17 +48,29 @@ const CreateNewPost = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/posts', postData);
-      console.log('Response:', response.data);
-      alert('File submitted successfully');
+      const postResponse = await axios.post('http://localhost:8080/api/v1/posts', postData);
+      const postId = postResponse.data._id;
+
+      console.log('Post submitted:', postResponse.data);
+      const notificationData = {
+        postId,
+        userName: user?.displayName,
+        userId: user?._id,
+        read: [],
+      };
+
+      const notificationResponse = await axios.post('http://localhost:8080/api/v1/notifications', notificationData);
+      console.log('Notification created:', notificationResponse.data);
+
+      alert('File and notification submitted successfully');
     } catch (error) {
-      console.error('Error submitting file:', error);
-      alert('Failed to submit file');
+      console.error('Error submitting file or creating notification:', error);
+      alert('Failed to submit file or notification');
     } finally {
       setLoading(false);
     }
   };
-
+  
   const handleFileRead = (file) => {
     const reader = new FileReader();
     reader.onload = (e) => {

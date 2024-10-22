@@ -9,6 +9,10 @@ import LandingPage from "./Pages/LandingPage";
 import SignIn from "./Pages/SignIn";
 import AuthProvider from "./Components/Authentication/AuthProvider";
 import SignUp from "./Pages/SignUp";
+import Home from "./Pages/Home";
+import PostPage from "./Components/Posts/PostPage";
+import NotificationList from "./Components/Notifications/NotificationList";
+import PostDetails from "./Components/Posts/PostDetails";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +26,26 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <LandingPage />,
+    children: [
+      {
+        path: 'home',
+        element: <Home />,
+        children: [
+          {
+            path: 'posts',
+            element: <PostPage />
+          },
+          {
+            path: 'notifications',
+            element: <NotificationList />
+          },
+          {
+            path: 'posts/:postId',
+            element: <PostDetails />
+          }
+        ]
+      }
+    ]
   },
 ]);
 

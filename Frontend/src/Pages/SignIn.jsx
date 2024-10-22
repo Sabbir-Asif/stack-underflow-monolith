@@ -16,7 +16,7 @@ const SignIn = () => {
 
     try {
       await signIn(email, password);
-      navigate("/");
+      navigate("/home/posts");
     } catch (error) {
       setError(error.message);
     }

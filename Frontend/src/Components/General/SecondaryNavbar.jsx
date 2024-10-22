@@ -1,0 +1,90 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { AiOutlineHome, AiFillHome, AiOutlineBell, AiFillBell } from "react-icons/ai";
+import { AuthContext } from '../Authentication/AuthProvider';
+import axios from 'axios';
+
+const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
+    const [notificationLength, setNotificationLength] = useState(0);
+    const { user } = useContext(AuthContext);
+
+    const fetchNotifications = async () => {
+        if (!user?._id) return;
+
+        try {
+            setLoading(true);
+            const res = await axios.get('http://localhost:8080/api/v1/notifications');
+
+            const filteredNotifications = res.data.filter(notification =>
+                notification.userId._id !== user?._id && !notification.read.includes(user?._id)
+            );
+
+            setNotifications(filteredNotifications);
+            setNotificationLength(filteredNotifications.length);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            fetchNotifications();
+            const intervalId = setInterval(() => {
+                fetchNotifications();
+            }, 5 * 60 * 1000);
+            return () => clearInterval(intervalId);
+        }
+    }, [user]);
+
+    return (
+        <div>
+            <ul className="menu lg:menu-horizontal rounded-box space-x-4 px-6">
+                <li>
+                    <NavLink
+                        to="/home/posts"
+                        className={({ isActive }) =>
+                            isActive
+                                ? 'rounded-none border-b-2 border-blue-primary text-blue-primary'
+                                : 'text-gray-500 rounded-none'
+                        }
+                    >
+                        {({ isActive }) =>
+                            isActive ? (
+                                <AiFillHome className='h-8 w-8' />
+                            ) : (
+                                <AiOutlineHome className='h-8 w-8' />
+                            )
+                        }
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/home/notifications"
+                        className={({ isActive }) =>
+                            isActive
+                                ? 'border-b-2 rounded-none border-blue-primary text-blue-primary'
+                                : 'text-gray-500'
+                        }
+                    >
+                        {({ isActive }) =>
+                            <>
+                                {isActive ? (
+                                    <AiFillBell className='h-8 w-8' />
+                                ) : (
+                                    <AiOutlineBell className='h-8 w-8 relative' />
+                                )}
+                                {notificationLength > 0 && (
+                                    <span className="absolute -mt-5 -mr-0.5 bg-info p-1 badge text-gray-700">{notificationLength}</span>
+                                )}
+                            </>
+                        }
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
+    );
+};
+
+export default SecondaryNavbar;

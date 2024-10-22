@@ -89,7 +89,7 @@ const Navbar = () => {
               {links}
             </ul>
           </div>
-          <NavLink to={"/"}>
+          <NavLink to={"/home/posts"}>
             <span className="flex items-center gap-1">
               <TbStackBack className="text-5xl text-base-200" />
               <h2 className="text-lg text-white md:text-xl font-medium italic font-poppins">
