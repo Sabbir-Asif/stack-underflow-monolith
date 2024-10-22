@@ -137,7 +137,6 @@ Contributions are welcome! Please fork this repository, create a new branch, and
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
 
 ### Instructions for Customization:
 1. Replace the placeholder repository URL (`https://github.com/yourusername/stack-underflow-monolith.git`) with the actual URL of your repository.
