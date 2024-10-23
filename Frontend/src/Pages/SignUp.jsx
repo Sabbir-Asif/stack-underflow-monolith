@@ -16,11 +16,9 @@ const SignUp = () => {
     const password = form.password.value;
 
     try {
-      // Create user with Firebase
       await createUser(email, password, name);
 
-      // Redirect to home after successful signup
-      navigate("/");
+      navigate("/home/posts");
     } catch (error) {
       console.error("SignUp Error: ", error);
       setError(error.message || "An error occurred");
