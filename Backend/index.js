@@ -47,10 +47,19 @@ io.on('connection', (socket) => {
 (async function subscribeToRedis() {
     const subscriber = redisClient.duplicate();
     await subscriber.connect();
+
+    // Subscribe to new-notification events
     await subscriber.subscribe('new-notification', (message) => {
         const notification = JSON.parse(message);
         io.emit('new-notification', notification);
     });
+
+    // Subscribe to read-notification events
+    await subscriber.subscribe('read-notification', (message) => {
+        const notification = JSON.parse(message);
+        io.emit('read-notification', notification); // Emit the read notification event
+    });
 })();
+
 
 server.listen(port, '0.0.0.0', () => console.log(`Server is running on port ${port}...`));

@@ -42,7 +42,7 @@ const PostList = ({ newPost ,setNewPost }) => {
             ) : (
                 <div>
                     {posts.map((post) => (
-                        <PostCard key={post._id} post={post} />
+                        <PostCard key={post._id} post={post} setNewPost={setNewPost} />
                     ))}
 
                     <div className="flex justify-center mt-4">

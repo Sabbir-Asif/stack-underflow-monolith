@@ -143,12 +143,19 @@ router.delete('/v1/posts/:id', async (req, res) => {
             return res.status(404).json({ message: "Post not found" });
         }
 
+        const bucketName = 'stackunderflow';
+        const fileName = post.fileName;
+
+        await minioClient.removeObject(bucketName, fileName);
+        console.log(`File ${fileName} deleted from MinIO.`);
+
         await Post.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Post deleted successfully" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Failed to delete post" });
+        res.status(500).json({ message: "Failed to delete post", error: error.message });
     }
 });
+
 
 module.exports = router;

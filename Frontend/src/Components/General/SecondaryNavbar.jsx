@@ -22,7 +22,6 @@ const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
             );
 
             setNotifications(filteredNotifications);
-            console.log("nav", notifications);
             setNotificationLength(filteredNotifications.length);
             setLoading(false);
         } catch (error) {
@@ -37,14 +36,13 @@ const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
         if (user) {
             fetchNotifications();
 
-            socket.on('new-notification', (newNotification) => {
-                // if (
-                //     newNotification.userId._id !== user._id &&
-                //     !newNotification.read.includes(user._id)
-                // ) {
-                //     setNotifications((prev) => [newNotification, ...prev]);
-                //     setNotificationLength(prev => prev + 1);
-                // }
+            socket.on('new-notification', () => {
+               
+                fetchNotifications();
+            });
+
+            socket.on('read-notification', () => {
+
                 fetchNotifications();
             });
         }

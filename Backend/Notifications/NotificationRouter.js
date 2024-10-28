@@ -89,7 +89,6 @@ router.put('/v1/notifications/:id', async (req, res) => {
         ).populate('postId userId read');
 
         if (!notification) return res.status(404).json({ message: 'Notification not found' });
-
         res.status(200).json(notification);
     } catch (err) {
         console.error('Error updating notification:', err.message);
@@ -106,6 +105,7 @@ router.put('/v1/notifications/:id/read', async (req, res) => {
         if (!notification.read.includes(req.body.userId)) {
             notification.read.push(req.body.userId);
             await notification.save();
+            await redisClient.publish('read-notification', JSON.stringify(notification));
         }
 
         res.status(200).json(notification);

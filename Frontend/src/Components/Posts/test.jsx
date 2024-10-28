@@ -2,14 +2,15 @@ import React, { useContext, useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { stackoverflowLight, stackoverflowDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import moment from 'moment';
-import { AuthContext } from '../Authentication/AuthProvider';
 import axios from 'axios';
+import { AuthContext } from '../Authentication/AuthProvider';
 
 const PostCard = ({ post, setNewPost }) => {
+
     const { user } = useContext(AuthContext);
     const [showFullContent, setShowFullContent] = useState(false);
-    const [showDropdown, setShowDropdown] = useState(false);
     const [theme, setTheme] = useState('light');
+    const [showDropdown, setShowDropdown] = useState(false);
     const toggleContent = () => setShowFullContent(!showFullContent);
     const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
     const truncatedText = (text, lines = 3) => {
@@ -35,7 +36,7 @@ const PostCard = ({ post, setNewPost }) => {
             <div className="card-body">
                 <div className="flex items-center mb-2 justify-between">
                     <div className="flex items-center">
-                        <img src={post.userId?.imageUrl} alt="" />
+                        <img src={post.userId?.imageUrl} alt="" className="w-8 h-8 rounded-full mr-2" />
                         <div className="text-blue-primary font-poppins font-semibold mr-2">{post.userId.displayName}</div>
                         <div className="text-sm text-gray-500">{timeDiff}</div>
                     </div>
@@ -76,7 +77,7 @@ const PostCard = ({ post, setNewPost }) => {
                         </label>
                         <div className="relative">
                             {
-                                user?._id === post.userId._id ?
+                                user?._id != post.userId._id ?
                                     <button
                                         onClick={() => setShowDropdown(!showDropdown)}
                                         className="focus:outline-none">
@@ -95,7 +96,7 @@ const PostCard = ({ post, setNewPost }) => {
                                             <circle cx="12" cy="5" r="2" />
                                         </svg>
                                     </button> : ""
-                            }
+                           }
 
                             {showDropdown && (
                                 <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
