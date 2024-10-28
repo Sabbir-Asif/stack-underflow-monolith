@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { stackoverflowLight, stackoverflowDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { GoCodeReview } from "react-icons/go";
 import moment from 'moment';
 import { AuthContext } from '../Authentication/AuthProvider';
 import axios from 'axios';
@@ -28,6 +29,11 @@ const PostCard = ({ post, setNewPost }) => {
             console.error("Failed to delete post", error);
             alert("Failed to delete post");
         }
+    };
+
+    const viewCode = () => {
+        const objUrl = `http://127.0.0.1:9000/stackunderflow/${post.fileName}`;
+        window.open(objUrl, '_blank');
     };
 
     return (
@@ -139,9 +145,15 @@ const PostCard = ({ post, setNewPost }) => {
                     </SyntaxHighlighter>
                 </div>
 
-                <div className="mt-2">
+                <div className="mt-2 flex justify-between">
                     <button className="btn btn-link text-blue-primary p-0" onClick={toggleContent}>
                         {showFullContent ? 'See Less' : 'See More'}
+                    </button>
+                    <button className="btn btn-link text-blue-primary p-0" onClick={viewCode}>
+                        <span className='flex gap-1'>
+                            <GoCodeReview className='text-lg' />
+                            <p>Download code</p>
+                        </span>
                     </button>
                 </div>
             </div>
