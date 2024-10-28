@@ -13,6 +13,8 @@ import Home from "./Pages/Home";
 import PostPage from "./Components/Posts/PostPage";
 import NotificationList from "./Components/Notifications/NotificationList";
 import PostDetails from "./Components/Posts/PostDetails";
+import PrivateRoute from "./Components/Authentication/PrivateRoute";
+import ForgotPassword from "./Pages/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -24,24 +26,38 @@ const router = createBrowserRouter([
     element: <SignIn />
   },
   {
+    path: '/forgot-password',
+    element: <ForgotPassword />
+  },
+  {
     path: "/",
-    element: <LandingPage />,
+    element: <PrivateRoute>
+      <LandingPage />
+    </PrivateRoute>,
     children: [
       {
         path: 'home',
-        element: <Home />,
+        element: <PrivateRoute>
+          <Home />
+        </PrivateRoute>,
         children: [
           {
             path: 'posts',
-            element: <PostPage />
+            element: <PrivateRoute>
+              <PostPage />
+            </PrivateRoute>
           },
           {
             path: 'notifications',
-            element: <NotificationList />
+            element: <PrivateRoute>
+              <NotificationList />
+            </PrivateRoute>
           },
           {
             path: 'posts/:postId',
-            element: <PostDetails />
+            element: <PrivateRoute>
+              <PostDetails />
+            </PrivateRoute>
           }
         ]
       }
@@ -52,7 +68,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-    <RouterProvider router={router} />
-  </AuthProvider>
-</React.StrictMode>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </React.StrictMode>
 );

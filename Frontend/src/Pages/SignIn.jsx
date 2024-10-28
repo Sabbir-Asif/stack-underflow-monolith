@@ -68,6 +68,12 @@ const SignIn = () => {
                 Sign Up
               </Link>
             </p>
+            <p className="text-center mt-4">
+              Forgot your password?{" "}
+              <Link to="/forgot-password" className="text-blue-secondary hover:underline">
+                Reset it
+              </Link>
+            </p>
           </form>
         </div>
       </div>

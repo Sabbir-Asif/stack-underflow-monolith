@@ -6,13 +6,14 @@ import { useOutletContext } from 'react-router-dom';
 
 const NotificationList = () => {
     const { user } = useContext(AuthContext);
-    const { notifications } = useOutletContext();  // Now notifications will be defined
+    const { notifications, setNotifications } = useOutletContext();
 
     const handleMarkAsRead = async (notificationId) => {
         try {
             await axios.put(`http://localhost:8080/api/v1/notifications/${notificationId}/read`, {
                 userId: user?._id
             });
+            alert('notification removed!')
         } catch (error) {
             console.error('Error marking notification as read:', error);
         }

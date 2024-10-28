@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AiOutlineHome, AiFillHome, AiOutlineBell, AiFillBell } from "react-icons/ai";
 import { AuthContext } from '../Authentication/AuthProvider';
+import { io } from 'socket.io-client';
 import axios from 'axios';
 
 const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
+    
     const [notificationLength, setNotificationLength] = useState(0);
     const { user } = useContext(AuthContext);
 
@@ -20,6 +22,7 @@ const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
             );
 
             setNotifications(filteredNotifications);
+            console.log("nav", notifications);
             setNotificationLength(filteredNotifications.length);
             setLoading(false);
         } catch (error) {
@@ -29,13 +32,26 @@ const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
     };
 
     useEffect(() => {
+        const socket = io('http://localhost:8080');
+
         if (user) {
             fetchNotifications();
-            const intervalId = setInterval(() => {
+
+            socket.on('new-notification', (newNotification) => {
+                // if (
+                //     newNotification.userId._id !== user._id &&
+                //     !newNotification.read.includes(user._id)
+                // ) {
+                //     setNotifications((prev) => [newNotification, ...prev]);
+                //     setNotificationLength(prev => prev + 1);
+                // }
                 fetchNotifications();
-            }, 5 * 60 * 1000);
-            return () => clearInterval(intervalId);
+            });
         }
+
+        return () => {
+            socket.disconnect();
+        };
     }, [user]);
 
     return (
@@ -76,7 +92,9 @@ const SecondaryNavbar = ({ notifications, setNotifications, setLoading }) => {
                                     <AiOutlineBell className='h-8 w-8 relative' />
                                 )}
                                 {notificationLength > 0 && (
-                                    <span className="absolute -mt-5 -mr-0.5 bg-red-500 p-1 badge text-base-200">{notificationLength}</span>
+                                    <span className="absolute -mt-5 -mr-0.5 bg-red-500 p-1 badge text-base-200">
+                                        {notificationLength}
+                                    </span>
                                 )}
                             </>
                         }

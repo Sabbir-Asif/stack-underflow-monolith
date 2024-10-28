@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { stackoverflowLight, stackoverflowDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import axios from "axios";
+import useAxiosSecure from "../../Hooks/UseAxiosSecure";
 
 const PostDetails = () => {
+    const axiosSecure = useAxiosSecure();
     const [post, setPost] = useState({});
     const [loading, setLoading] = useState(true);
     const { postId } = useParams();

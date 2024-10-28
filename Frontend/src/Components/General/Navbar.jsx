@@ -1,13 +1,13 @@
 import { useState, useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom"; // Import useNavigate
+import { NavLink, useNavigate } from "react-router-dom";
 import { TbStackBack } from "react-icons/tb";
 import { AuthContext } from "../Authentication/AuthProvider";
-import Profile from "./Profile"; // Import the new Profile component
+import Profile from "./Profile";
 
 const Navbar = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to control the drawer
-  const { user, logOut, setUser } = useContext(AuthContext); // Added setUser to update user
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { user, logOut, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleAuthClick = () => {
     if (user) {
@@ -17,7 +17,6 @@ const Navbar = () => {
         })
         .catch((error) => console.error(error));
     } else {
-      // Use navigate to redirect to sign-in page
       navigate("/sign-in");
     }
   };
@@ -41,7 +40,7 @@ const Navbar = () => {
             <div className="relative">
               <button
                 className="text-md mr-2 text-white font-poppins border-2 border-blue-primary rounded-full p-1"
-                onClick={() => setIsDrawerOpen(true)} // Open drawer on click
+                onClick={() => setIsDrawerOpen(true)}
               >
                 <img
                   src={user.imageUrl || 'https://via.placeholder.com/150'}
@@ -50,7 +49,6 @@ const Navbar = () => {
                 />
               </button>
 
-              {/* Drawer */}
               {isDrawerOpen && (
                 <div className="fixed top-20 right-2 w-80 shadow-lg z-50">
                   <Profile user={user} setUser={setUser} setIsDrawerOpen={setIsDrawerOpen} />

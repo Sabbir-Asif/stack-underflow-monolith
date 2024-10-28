@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./frontend 
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"      
+    depends_on:
+      - backend          
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend   
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"        
+    environment:
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+    depends_on:
+      - minio             
+    networks:
+      - app-network
+
+  minio:
+    image: minio/minio:latest
+    command: server /data
+    ports:
+      - "9000:9000"         
+      - "9001:9001"         
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio-data:/data    
+    networks:
+      - app-network
+
+volumes:
+  minio-data:
+
+networks:
+  app-network:
+    driver: bridge

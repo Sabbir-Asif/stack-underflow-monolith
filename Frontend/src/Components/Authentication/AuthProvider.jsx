@@ -1,11 +1,12 @@
 import { createContext, useEffect, useState } from "react";
-import { 
-    createUserWithEmailAndPassword, 
-    getAuth, 
-    onAuthStateChanged, 
-    signInWithEmailAndPassword, 
-    signOut, 
-    updateProfile 
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail, // Rename for clarity
 } from "firebase/auth";
 import app from "../../Firebase/firebase.config";
 
@@ -19,39 +20,42 @@ const AuthProvider = ({ children }) => {
   const fetchUserData = async (email) => {
     const res = await fetch(`http://localhost:8080/api/v1/users/search?email=${email}`);
     const data = await res.json();
-    if (data.length > 0) {
-      return data[0];
-    }
-    return null;
+    return data.length > 0 ? data[0] : null;
   };
 
   const createUser = async (email, password, userName) => {
     setLoading(true);
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(result.user, { displayName: userName });
 
-      await updateProfile(result.user, {
-        displayName: userName,
-      });
-      
       const displayName = userName;
-      const imageUrl = result.user?.photoUrl || 'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=';
+      const imageUrl = result.user?.photoURL || 'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=';
       const newUser = { displayName, email, imageUrl };
 
       const response = await fetch('http://localhost:8080/api/v1/users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newUser)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser),
       });
-      
+
       const savedUser = await response.json();
-      
       setUser(savedUser);
-      
     } catch (error) {
       console.error('Error creating user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendPasswordResetEmail = async (email) => {
+    setLoading(true);
+    try {
+      await firebaseSendPasswordResetEmail(auth, email);
+      alert("Password reset email sent! Check your inbox.");
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      alert("Error sending password reset email. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -61,10 +65,8 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-
       const userData = await fetchUserData(result.user.email);
       setUser(userData);
-
       return result;
     } catch (error) {
       console.error('Error signing in:', error);
@@ -102,7 +104,8 @@ const AuthProvider = ({ children }) => {
     createUser,
     signIn,
     logOut,
-    setUser
+    sendPasswordResetEmail,
+    setUser,
   };
 
   return (

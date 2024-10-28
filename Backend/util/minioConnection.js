@@ -17,12 +17,13 @@ async function checkBucket() {
     if (exists) {
       console.log('Bucket ' + bucket + ' exists.');
     } else {
-      console.log('Bucket does not exist.');
+      console.log('Bucket does not exist. Creating bucket...');
+      await minioClient.makeBucket(bucket, 'us-east-1');
+      console.log('Bucket ' + bucket + ' created successfully.');
     }
   } catch (err) {
-    console.error('Error checking bucket:', err);
+    console.error('Error checking or creating bucket:', err);
   }
 }
 
-module.exports = {minioClient, checkBucket};
-
+module.exports = { minioClient, checkBucket };

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PostCard from './PostCard';
+import useAxiosSecure from '../../Hooks/UseAxiosSecure';
 
-const PostList = () => {
+const PostList = ({ newPost ,setNewPost }) => {
+    const axiosSecure = useAxiosSecure();
     const [posts, setPosts] = useState([]);
     const [pagination, setPagination] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
@@ -15,6 +17,7 @@ const PostList = () => {
             setPosts(res.data.data.posts);
             setPagination(res.data.data.pagination);
             setLoading(false);
+            setNewPost(false);
         } catch (error) {
             console.error('Error fetching posts', error);
             setLoading(false);
@@ -23,7 +26,7 @@ const PostList = () => {
 
     useEffect(() => {
         fetchPosts(currentPage);
-    }, [currentPage]);
+    }, [currentPage, newPost]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);

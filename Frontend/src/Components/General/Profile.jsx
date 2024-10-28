@@ -2,8 +2,11 @@ import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { RiLogoutBoxRLine, RiLogoutBoxFill, RiLogoutBoxRFill } from "react-icons/ri";
 import { AuthContext } from '../Authentication/AuthProvider';
+import useAxiosSecure from '../../Hooks/UseAxiosSecure';
 
 const Profile = ({ user, setUser, setIsDrawerOpen }) => {
+    const axiosSecure = useAxiosSecure();
+
     const [newImageUrl, setNewImageUrl] = useState('');
     const { logOut } = useContext(AuthContext);
 
@@ -18,6 +21,7 @@ const Profile = ({ user, setUser, setIsDrawerOpen }) => {
             });
             setUser(response.data);
             setNewImageUrl('');
+            alert('profile picture updated');
         } catch (error) {
             console.error('Error updating profile picture:', error);
         }

@@ -12,8 +12,10 @@ import 'prismjs/components/prism-php';
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import { AuthContext } from '../Authentication/AuthProvider';
+import useAxiosSecure from '../../Hooks/UseAxiosSecure';
 
-const CreateNewPost = () => {
+const CreateNewPost = ({ setNewPost }) => {
+  const axiosSecure = useAxiosSecure();
   const [question, setQuestion] = useState('');
   const [fileType, setFileType] = useState('javascript');
   const [fileContent, setFileContent] = useState('');
@@ -58,6 +60,8 @@ const CreateNewPost = () => {
         userId: user?._id,
         read: [],
       };
+
+      setNewPost(true);
 
       const notificationResponse = await axios.post('http://localhost:8080/api/v1/notifications', notificationData);
       console.log('Notification created:', notificationResponse.data);
