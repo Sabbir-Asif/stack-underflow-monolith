@@ -21,6 +21,7 @@ const SignUp = () => {
       navigate("/home/posts");
     } catch (error) {
       console.error("SignUp Error: ", error);
+      alert("Error sign up", error);
       setError(error.message || "An error occurred");
     }
   };

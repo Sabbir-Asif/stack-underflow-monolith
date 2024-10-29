@@ -18,6 +18,7 @@ const SignIn = () => {
       await signIn(email, password);
       navigate("/home/posts");
     } catch (error) {
+      alert("Error sign in");
       setError(error.message);
     }
   };

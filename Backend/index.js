@@ -6,6 +6,8 @@ const mongoConnection = require("./util/mongoConnection");
 const users = require('./User/UserController');
 const posts = require('./Posts/PostController');
 const notifications = require('./Notifications/NotificationRouter');
+const cron = require('node-cron');
+const Notification = require('./Notifications/NotificationModel');
 const { checkBucket } = require('./util/minioConnection');
 const { createClient } = require('redis');
 const http = require('http');
@@ -16,25 +18,22 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: '*' } });
 
-// Redis client
+
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
 
-// Middleware
 app.use(express.json());
 app.use(cors());
 
-// DB connection
 mongoConnection();
 checkBucket();
 
-// Routes
+
 app.get('/', (req, res) => res.send('server is running'));
 app.use('/api', users);
 app.use('/api', posts);
 app.use('/api', notifications);
 
-// Socket.IO connection
 io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
 
@@ -43,23 +42,29 @@ io.on('connection', (socket) => {
     });
 });
 
-// Listen for new notifications in Redis
 (async function subscribeToRedis() {
     const subscriber = redisClient.duplicate();
     await subscriber.connect();
 
-    // Subscribe to new-notification events
     await subscriber.subscribe('new-notification', (message) => {
         const notification = JSON.parse(message);
         io.emit('new-notification', notification);
     });
 
-    // Subscribe to read-notification events
     await subscriber.subscribe('read-notification', (message) => {
         const notification = JSON.parse(message);
-        io.emit('read-notification', notification); // Emit the read notification event
+        io.emit('read-notification', notification);
     });
 })();
 
+cron.schedule('0 0 * * *', async () => {
+    try {
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const result = await Notification.deleteMany({ createdAt: { $lt: yesterday } });
+        console.log(`Deleted ${result.deletedCount} old notifications`);
+    } catch (err) {
+        console.error('Error deleting old notifications:', err.message);
+    }
+});
 
 server.listen(port, '0.0.0.0', () => console.log(`Server is running on port ${port}...`));
