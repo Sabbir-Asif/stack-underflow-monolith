@@ -6,7 +6,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail, // Rename for clarity
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
 } from "firebase/auth";
 import app from "../../Firebase/firebase.config";
 

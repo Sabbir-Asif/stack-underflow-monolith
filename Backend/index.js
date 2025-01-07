@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 require("dotenv").config();
 const cors = require('cors');
@@ -9,7 +8,7 @@ const notifications = require('./Notifications/NotificationRouter');
 const cron = require('node-cron');
 const Notification = require('./Notifications/NotificationModel');
 const { checkBucket } = require('./util/minioConnection');
-const { createClient } = require('redis');
+const redis = require('redis');
 const http = require('http');
 const socketIo = require('socket.io');
 
@@ -18,16 +17,32 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: '*' } });
 
+// Redis client configuration
+const redisClient = redis.createClient({
+    socket: {
+        host: process.env.REDIS_HOST || 'redis', // Ensure the service name is used as host
+        port: parseInt(process.env.REDIS_PORT) || 6379
+    }
+});
 
-const redisClient = createClient();
-redisClient.connect().catch(console.error);
+// Handle Redis connection events
+redisClient.on('error', (err) => console.log('Redis Client Error:', err));
+redisClient.on('connect', () => console.log('Connected to Redis successfully'));
+
+// Connect to Redis
+(async () => {
+    try {
+        await redisClient.connect();
+    } catch (error) {
+        console.error('Error connecting to Redis:', error);
+    }
+})();
 
 app.use(express.json());
 app.use(cors());
 
 mongoConnection();
 checkBucket();
-
 
 app.get('/', (req, res) => res.send('server is running'));
 app.use('/api', users);
@@ -44,17 +59,21 @@ io.on('connection', (socket) => {
 
 (async function subscribeToRedis() {
     const subscriber = redisClient.duplicate();
-    await subscriber.connect();
+    try {
+        await subscriber.connect();
+        
+        await subscriber.subscribe('new-notification', (message) => {
+            const notification = JSON.parse(message);
+            io.emit('new-notification', notification);
+        });
 
-    await subscriber.subscribe('new-notification', (message) => {
-        const notification = JSON.parse(message);
-        io.emit('new-notification', notification);
-    });
-
-    await subscriber.subscribe('read-notification', (message) => {
-        const notification = JSON.parse(message);
-        io.emit('read-notification', notification);
-    });
+        await subscriber.subscribe('read-notification', (message) => {
+            const notification = JSON.parse(message);
+            io.emit('read-notification', notification);
+        });
+    } catch (error) {
+        console.error('Error subscribing to Redis:', error);
+    }
 })();
 
 cron.schedule('0 0 * * *', async () => {
